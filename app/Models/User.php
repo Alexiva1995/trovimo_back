@@ -17,10 +17,12 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role',//1: persona, 2: empresa, 3:experto
+
+        'name', 'show_name', 'username', 'email', 
+        'password', 'role', 'phone', 'country',
+        'city', 'address', 'postal_code', 'linkedin', 
+        'facebook', 'youtube', 'twitter', 'instagram', 
+        'id_company', 'register_type',
     ];
 
     /**
@@ -41,4 +43,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function expert_services(){
+        return $this->belongsToMany('App\Models\Expert_service', 'expert_services_users', 'user_id', 'expert_service_id')->withTimestamps();
+    }
 }

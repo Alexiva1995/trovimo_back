@@ -4,20 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class Project extends Model
 {
-    public $table = "products";
+    public $table = "projects";
 
     protected $fillable = [
-        'user_id', 'option_id', 'category_id', 'price', 'show_price', 'rooms', 'bath', 'parking_spots',
-        'n_pieces', 'area', 'year_built', 'year_remodeled', 'description', 'country', 'city',
-        'postal_code', 'lat', 'lon',    'tour',    'name',    'email', 'phone', 'condition', 'furnished'
+        'user_id', 'category_id', 'price', 'show_price', 'rooms', 'bath', 'parking_spots',
+        'area', 'description', 'country', 'city', 'postal_code', 'lat', 'lon', 'tour',
+        'name',    'email', 'phone'
     ];
 
     public function scopeAddress($query, $address)
     {
         if ($address != "") {
-            $query->where('country', 'LIKE', '%'.$address.'%')->orWhere('city', 'LIKE', '%'.$address.'%');
+            $query->where('country', 'LIKE', '%' . $address . '%')->orWhere('city', 'LIKE', '%' . $address . '%');
         }
     }
 
@@ -27,10 +27,9 @@ class Product extends Model
             $query->where('category_id', '=', $type);
         }
     }
-
     public function scopePrice($query, $pricemin, $pricemax)
     {
-        if (($pricemin != "") &&($pricemax != "")) {
+        if (($pricemin != "") && ($pricemax != "")) {
             $query->where('price', '>=', $pricemin)->where('price', '<=', $pricemax);
         }
     }
@@ -50,6 +49,12 @@ class Product extends Model
     {
         if ($bath != "") {
             $query->where('bath', '=', $bath);
+        }
+    }
+    public function scopeParking($query, $parking)
+    {
+        if ($parking != "") {
+            $query->where('parking_spots', '=', $parking);
         }
     }
 }
