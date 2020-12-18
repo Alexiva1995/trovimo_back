@@ -16,6 +16,7 @@ use App\Models\Product_image;
 use App\Models\Product_video;
 use App\Models\Reference_point;
 use Storage;
+use DB;
 
 
 class ProductController extends Controller
@@ -31,8 +32,14 @@ class ProductController extends Controller
     }
 
     public function create_product(Request $request){
+        $request->validate(['price'=> 'required', 'show_price' => 'required', 'rooms' => 'required', 'bath'=> 'required',
+         'parking_spots'=> 'required', 'n_pieces' => 'required', 'area'=> 'required', 'year_built'=> 'required',
+         'year_remodeled'=> 'required', 'description'=> 'required', 'country'=> 'required', 'city'=> 'required',
+         'postal_code'=> 'required', 'lat'=> 'required', 'lon'=> 'required', 'tour'=> 'required', 'name'=> 'required',
+         'email'=> 'required', 'phone'=> 'required', 'option_id'=> 'required', 'category_id'=> 'required',]);
         try{
             $product= new Product($request->all());
+            $product->user_id= $request->user()->id;
             $product->save();
             return response()->json(['message' => $product], 200);
         } catch (Exception $e) {
@@ -40,13 +47,13 @@ class ProductController extends Controller
         }
     }
 
-    public function Add_photo_product(Request $request){
+    public function add_photo_product(Request $request){
         $request->validate(['product_id'=> 'required', 'photo' => 'required']);
         try{
             if ($request->hasFile('photo')){
                 $file = $request->file('photo');
                 $name = 'image_'.$request->product_id.time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path().'/uploads/images/products', $name);
+                $file->move(public_path().'/uploads/products/images/', $name);
                 
                 $photo= new Product_image();
                 $photo->url= $name;
@@ -59,11 +66,10 @@ class ProductController extends Controller
         } 
     }
 
-    public function Add_video_product(Request $request){
+    public function add_video_product(Request $request){
         try {
             $request->validate([
                 'product_id' => 'required',
-                'video'  => 'required',
                 'type' => 'required',
             ]);
             if ($request->hasFile('video')) {
@@ -76,6 +82,12 @@ class ProductController extends Controller
                 $video->product_id = $request->product_id;
                 $video->type=$request->type;
                 $video->save();
+            }else{
+                $video = new Product_video();
+                $video->url = $request->url;
+                $video->product_id = $request->product_id;
+                $video->type=$request->type;
+                $video->save();
             }
             return response()->json(['message' => 'Success'], 200);
         } catch (Exception $e) {
@@ -83,24 +95,102 @@ class ProductController extends Controller
         }
     }
 
-    public function Add_service_product(Request $request){
+    public function create_optional(Request $request){
+
+        $request->validate([
+            'product_id' => 'required',
+            'home_details' => 'required',
+            'builds' => 'required',
+            'condition' => 'required',
+            'furnished' => 'required',
+            'reference_points'=> 'required',
+            'services'=> 'required',
+
+        ]);
+
         try{
-            $service= new Additional_service($request->all());
-            $service->save();
-            return response()->json(['message' => $service], 200);
+            $date= date('Y-m-d H:i:s');
+            foreach ($request->home_details as $det){
+                DB::table('product_home_details')->insert(['product_id'=>$request->product_id,
+                                                                'home_detail_id'=> $det,
+                                                                'created_at'=>  $date,
+                                                                'updated_at'=>  $date]);
+            }
+            foreach ($request->builds as $build){
+                DB::table('product_building_details')->insert(['product_id'=>$request->product_id,
+                                                                'building_detail_id'=> $build,
+                                                                'created_at'=>  $date,
+                                                                'updated_at'=>  $date]);
+            }
+
+            foreach ($request->services as $serv){
+                $service= new Additional_service();
+                $service->product_id= $request->product_id;
+                $service->service= $serv[0];
+                $service->price= $serv[1];
+                $service->save();
+            }
+
+            foreach ($request->reference_points as $point){
+                $reference_point= new Reference_point();
+                $reference_point->product_id= $request->product_id;
+                $reference_point->name= $point[1];
+                $reference_point->point= $point[0];
+                $reference_point->save();
+            }
+
+            $product = Product::find($request->product_id);
+            $product->fill($request->all());
+            $product->save();
+
+
+            return response()->json(['message' => 'success'], 200);
         } catch (Exception $e) {
             return response()->json(['message' => 'Error'], 500);
         }
     }
 
-    public function Add_reference_point(Request $request){
+    public function optional_options(Request $request){
         try{
-            $reference_point= new Reference_point($request->all());
-            $reference_point->save();
-            return response()->json(['message' => $reference_point], 200);
+            $home_details = Home_detail::get();
+            $builds= Building_detail::get();
+            return response()->json(['home_details' => $home_details, 'builds' => $builds], 200);
         } catch (Exception $e) {
             return response()->json(['message' => 'Error'], 500);
         }
     }
 
+    public function search(Request $request){
+        try{
+ /*           if (!is_null($request->amenities)){
+                $possibleProducts = Product::address($request->address)
+                                        ->type($request->type)
+                                        ->price($request->pricemin, $request->pricemax)
+                                        ->area($request->areamin, $request->areamax)
+                                        ->room($request->room)
+                                        ->bath($request->bath)
+                                        ->get();
+                
+                foreach ($possibleProducts as $possibleProduct){
+                    $check = DB::table('shared_spaces_place_details')
+                                ->where('shared_space_id', '=', $possibleProduct->id)
+                                ->whereIn('coworking_place_details_id', $request->amenities)
+                                ->get();
+                }
+*/
+                $product = Product::address($request->address)
+                            ->type($request->type)
+                            ->price($request->pricemin, $request->pricemax)
+                            ->area($request->areamin, $request->areamax)
+                            ->room($request->room)
+                            ->bath($request->bath)
+                            ->get();
+
+            
+            return response()->json(['products' => $product], 200);                    
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Error'], 500);
+        }
+
+    }
 }

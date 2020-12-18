@@ -14,6 +14,7 @@ class AuthController extends Controller{
             'email'    => 'required|string|email|unique:users',
             'password' => 'required|string',
             'role' => 'required',
+            'register_type' => 'required',
             'remember_me' => 'boolean',
         ]);
         $user = new User($request->all());
@@ -76,7 +77,17 @@ class AuthController extends Controller{
     public function user(Request $request){   
         return response()->json($request->user());
     }
-    
+    public function login_with_register(Request $request){
+        $user= User::where("email", "=", $request->email)->first();
+    	if (!is_null($user)){
+            $token= $this->login($request);
+    	 return response()->json($token, 200);
+    	}else{
+            $token= $this->register($request);
+    	 return response()->json($token, 200);
+        }
+
+    }
     public function verify_email(Request $request){
     	$user= User::where("email", "=", $request->email)->first();
     	if (!is_null($user)){
