@@ -69,7 +69,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 
 
-Route::get('blog', function(Request $request){
+Route::post('blog', function(Request $request){
     $Blog = \App\Models\Blog::find($request->input('id'));
     $prev = $Blog?$Blog->toArray():null;
     $status = 'ok';
