@@ -67,6 +67,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 });
 
-Route::resource('blog', 'Admin\BlogController')->only([
-    'store','show','update','destroy'
-]);
+Route::resource('blog', 'Admin\BlogController');

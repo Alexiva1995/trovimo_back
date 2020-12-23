@@ -77,21 +77,17 @@ class BlogController extends \App\Http\Controllers\Controller
     public function update(Request $request, Blog $blog)
     {
         if(!$blog) return [ 'status'=> 'failed', 'message'=>'El blog solicitado no existe', ];
-        $user = $request->user();
-        if($user && ($user->role === 0 || $user->id ===  $blog->autor) ){
-            $request->validate([
-                'title' => 'required|string',
-                'picture' => 'required|url',
-                'content' => 'required',
-                'user_id' => 'exists:user,id|integer',
-            ]);
-            $update = $blog->update($request->input());
-            return [
-                'status'=>$update?'ok':'failed',
-                'data'=>$update?$blog:null,
-            ];
-        }
-        else return [ 'status'=> 'failed', 'message'=>'No tienes permisos suficientes para editar este contenido.', ];
+        $request->validate([
+            'title' => 'required|string',
+            'picture' => 'required|url',
+            'content' => 'required',
+            'user_id' => 'exists:user,id|integer',
+        ]);
+        $update = $blog->update($request->input());
+        return [
+            'status'=>$update?'ok':'failed',
+            'data'=>$update?$blog:null,
+        ];
     }
 
     /**
