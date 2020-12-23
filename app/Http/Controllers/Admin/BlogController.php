@@ -1,31 +1,33 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\Blog;
 use Illuminate\Http\Request;
 
-class BlogController extends Controller
+class BlogController extends \App\Http\Controllers\Controller
 {
+    public function __construct(){
+        $this->middleware(function ($request, $next) {
+            $user = $request->user();
+            return $request->isMethod('get')||($user && $user->role === 0)
+                ?$next($request)
+                :abort(403, 'No tienes permisos suficientes');
+        })->except('show');
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
-    }
+    public function index() { }
 
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
-    }
+    public function create() { }
 
     /**
      * Store a newly created resource in storage.
@@ -35,7 +37,16 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|string',
+            'picture' => 'required|url',
+            'content' => 'required',
+            'user_id' => 'exists:user,id|integer',
+        ]);
+        return [
+            'status'=>'ok',
+            'data'=>\App\Models\Blog::create($request->input()),
+        ];
     }
 
     /**
@@ -44,9 +55,8 @@ class BlogController extends Controller
      * @param  \App\Models\Blog  $blog
      * @return \Illuminate\Http\Response
      */
-    public function show(Blog $blog)
-    {
-        //
+    public function show(Blog $blog){
+        return [ 'status'=>$blog?'ok':'failed','message'=>!$blog?'El blog solicitado no existe':null, 'data'=>$blog, ];
     }
 
     /**
@@ -55,10 +65,7 @@ class BlogController extends Controller
      * @param  \App\Models\Blog  $blog
      * @return \Illuminate\Http\Response
      */
-    public function edit(Blog $blog)
-    {
-        //
-    }
+    public function edit(Blog $blog) { }
 
     /**
      * Update the specified resource in storage.
@@ -69,7 +76,22 @@ class BlogController extends Controller
      */
     public function update(Request $request, Blog $blog)
     {
-        //
+        if(!$blog) return [ 'status'=> 'failed', 'message'=>'El blog solicitado no existe', ];
+        $user = $request->user();
+        if($user && ($user->role === 0 || $user->id ===  $blog->autor) ){
+            $request->validate([
+                'title' => 'required|string',
+                'picture' => 'required|url',
+                'content' => 'required',
+                'user_id' => 'exists:user,id|integer',
+            ]);
+            $update = $blog->update($request->input());
+            return [
+                'status'=>$update?'ok':'failed',
+                'data'=>$update?$blog:null,
+            ];
+        }
+        else return [ 'status'=> 'failed', 'message'=>'No tienes permisos suficientes para editar este contenido.', ];
     }
 
     /**
@@ -80,6 +102,10 @@ class BlogController extends Controller
      */
     public function destroy(Blog $blog)
     {
-        //
+        return [
+            'message'=>!$blog?'El blog solicitado no existe':null,
+            'status'=> ($blog&&$blog->delete())?'ok':'failed',
+            'data'=>null,
+        ];
     }
 }

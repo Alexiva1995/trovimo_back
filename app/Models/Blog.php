@@ -9,21 +9,24 @@ class Blog extends Model
 {
     use HasFactory;
 
+    protected $appends = ['autor'];
+    protected $hiddens = ['user_id'];
     protected $fillable = [
         'title',
         'picture',
         'content',
-        'autor',
+        'user_id',
     ];
 
-    public function getUserAttribute(){
+    public function getAutorAttribute(){
         return User::find($this->user_id);
     }
-    public function setUserAttribute($user){
+    public function setAutorAttribute($user){
+        $user = User::find($user);
         $this->update([
-            'user_id'=>User::find($user)->id,
+            'user_id'=>$user->id,
         ]);
-        return $this->user;
+        return $user;
     }
 
 }

@@ -67,40 +67,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 });
 
-
-
-Route::any('blog', function(Request $request){
-    $Blog = \App\Models\Blog::find($request->input('id'));
-    $prev = $Blog?$Blog->toArray():null;
-    $status = 'ok';
-    // Verificamos si hay una sesión iniciada y guardamos al usuario en la variable
-    // Verificamos también que la solicitud se este realizando por POST
-    if($user=auth()->user() && $request->isMethod('post')){
-        // Comprobamos los permisos del usuario para el CRUD
-        if($user->role===0){
-            // Revisamos si nos solicitan la eliminación del Blog
-            if($Blog && $request->input('delete'))
-                // Enviamos una respuesta con el resultado de la operación
-                return [ 'status'=>$Blog->delete()?$status:'failed', ];
-            // En caso de no solicitar el delete sino de actualizar entonces actualizamos
-            else if($Blog) $Blog->update($request->input());
-            // Si el blog no existe, intentamos validar el formulario y crear un nuevo blog
-            else if(!$Blog){
-                $request->validate([
-                    'title' => 'required|string',
-                    'picture' => 'required|url',
-                    'body' => 'required',
-                    'autor' => 'exists:user,id|integer',
-                ]);
-                // Guardamos el nuevo Blog en una variable
-                $Blog =  \App\Models\Blog::create($request->input());
-            }
-        }
-    }
-    // Regresamos una respuesta con los resultados de la operación anterior
-    return [
-        'status'=>$status, //Estatus de la operación
-        'prev'=>$prev, // Valor anterior del blog (NULL en caso de ser nuevo)
-        'data'=>$Blog, // El contenido actualizado o creado del blog
-    ];
-})->middleware('auth:api'); //Aplicamos el middleware de auth:api para validar la sesión
+Route::resource('blog', 'Admin\BlogController')->only([
+    'store','show','update','destroy'
+]);
