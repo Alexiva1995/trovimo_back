@@ -43,10 +43,11 @@ class BlogController extends \App\Http\Controllers\Controller
             'content' => 'required',
             'user_id' => 'exists:user,id|integer',
         ]);
-        return [
-            'status'=>'ok',
-            'data'=>\App\Models\Blog::create($request->input()),
-        ];
+        try {
+            return response()->json([ 'data'=>Blog::create($request->input()), ],200);
+        } catch (\Throwable $th) {
+            return response()->json([ 'message'=>$th, ],500);
+        }
     }
 
     /**
@@ -56,7 +57,11 @@ class BlogController extends \App\Http\Controllers\Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Blog $blog){
-        return [ 'status'=>$blog?'ok':'failed','message'=>!$blog?'El blog solicitado no existe':null, 'data'=>$blog, ];
+        try {
+            return response()->json([ 'data'=>$blog, ],200);
+        } catch (\Throwable $th) {
+            return response()->json([ 'message'=>$th, ],500);
+        }
     }
 
     /**
@@ -83,11 +88,12 @@ class BlogController extends \App\Http\Controllers\Controller
             'content' => 'required',
             'user_id' => 'exists:user,id|integer',
         ]);
-        $update = $blog->update($request->input());
-        return [
-            'status'=>$update?'ok':'failed',
-            'data'=>$update?$blog:null,
-        ];
+        try {
+            $update = $blog->update($request->input());
+            return response()->json([ 'data'=>$blog, ],200);
+        } catch (\Throwable $th) {
+            return response()->json([ 'message'=>$th, ],500);
+        }
     }
 
     /**
@@ -98,10 +104,11 @@ class BlogController extends \App\Http\Controllers\Controller
      */
     public function destroy(Blog $blog)
     {
-        return [
-            'message'=>!$blog?'El blog solicitado no existe':null,
-            'status'=> ($blog&&$blog->delete())?'ok':'failed',
-            'data'=>null,
-        ];
+        try {
+            $update = $blog->delete();
+            return response()->json([ 'data'=>null, ],200);
+        } catch (\Throwable $th) {
+            return response()->json([ 'message'=>$th, ],500);
+        }
     }
 }
