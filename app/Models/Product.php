@@ -52,4 +52,27 @@ class Product extends Model
             $query->where('bath', '=', $bath);
         }
     }
+
+    public function photos(){
+        return $this->hasMany('App\Models\Product_image');
+    }
+
+    public function videos(){
+        return $this->hasMany('App\Models\Product_video');
+    }
+
+    public function home_detail(){
+        return $this->belongsToMany('App\Models\Home_detail', 'product_home_details', 'product_id', 'home_detail_id')->withTimestamps();
+    }
+
+    public function building_detail(){
+        return $this->belongsToMany('App\Models\Building_detail', 'product_building_details', 'product_id', 'building_detail_id')->withTimestamps();
+    }
+    public function additional_service(){
+        return $this->hasMany('App\Models\Additional_service');
+    }
+
+    public function reference_point(){
+        return $this->hasMany('App\Models\Reference_point');
+    }
 }

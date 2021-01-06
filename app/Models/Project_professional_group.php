@@ -8,4 +8,8 @@ class Project_professional_group extends Model{
     public $table = "project_professional_group";
 
     protected $fillable = ['project_id', 'name',];
+
+    public function project(){
+        return $this->belongsTo('App\Models\Project');
+    }
 }

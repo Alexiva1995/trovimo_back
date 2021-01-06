@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Recommendation;
+use App\Models\favorite;
 use App\Models\Product;
 use App\Models\additional_service;
 use App\Models\building_detail;
@@ -167,15 +167,42 @@ class Shared_SpacesController extends Controller
                 $Shared_Spaces = Shared_Space::address($request->address)
                             ->type($request->type)
                             ->price($request->pricemin, $request->pricemax)
-                            ->area($request->areamin, $request->areamax)
-                            ->room($request->room)
-                            ->bath($request->bath)
+                            ->Furnished($request->furnished)
+                            ->Pets($request->pets)
+                            ->Bathrooms($request->bath)
                             ->get();
-            return response()->json(['products' => $product], 200);                    
+
+                    if (!is_null($request->amenities)){   
+                        $shared = collect();      
+                        foreach ($Shared_Spaces as $possible){
+                                    $check = DB::table('shared_spaces_place_details')
+                                                ->where('shared_space_id', '=', $possible->id)
+                                                ->whereIn('coworking_place_details_id', $request->amenities)
+                                                ->count();
+                                    if($check>0){
+                                        $shared->push($possible);
+                                    }
+                        }
+                        return response()->json(['shared_spaces' => $shared], 200); 
+                    }
+            return response()->json(['shared_spaces' => $Shared_Spaces], 200);                    
         } catch (Exception $e) {
             return response()->json(['message' => 'Error'], 500);
         }
 
     }
 
+    public function show(Request $request)
+    {
+        $request->validate(['shared_space_id' => 'required']);
+        try {
+            $shared_space = Shared_space::where('id', '=', $request->shared_space_id)->with('photos', 'videos','equiments', 'preferences', 'amenities', 'plans')->get();
+            $favorite = Favorite::where('shared_space_id', '=', $request->shared_space_id)
+                ->where('user_id', '=', $request->user()->id)->get();
+            $shared_space->favorite = $favorite;
+            return response()->json(['shared_spaces' => $shared_space], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Error'], 500);
+        }
+    }
 }

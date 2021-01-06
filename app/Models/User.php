@@ -44,7 +44,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function expert_services(){
-        return $this->belongsToMany('App\Models\Expert_service', 'expert_services_users', 'user_id', 'expert_service_id')->withTimestamps();
+    public function expert_profile(){
+        return $this->hasOne('App\Models\Expert_profile');
     }
 }
