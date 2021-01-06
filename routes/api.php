@@ -69,8 +69,22 @@ Route::group(['prefix' => 'auth'], function () {
 /*
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
-   
+
 */
 
 
 });
+
+Route::resource('blog', 'Admin\BlogController');
+
+
+Route::resource('reels', 'Api\UsersExperienceController');
+/*
+    Para las busquedas no se usaran URL amigables
+    · Titulo ?title=Modern+Artic
+    · Tipos ?types=kitchen,living
+    · Estilos ?styles=modern,rustic
+    · Colores ?colors=red,blue,green
+    · Etiquetas ?tags=room,bathroom
+*/
+Route::get('reels/search', 'Api\UsersExperienceController@search');
