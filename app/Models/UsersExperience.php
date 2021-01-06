@@ -17,18 +17,4 @@ class UsersExperience extends Model
     ];
 
 
-
-
-
-
-    public function search($term){
-        $this->where(function($query){
-            // $query->
-        });
-
-
-    }
-
-
-
 }

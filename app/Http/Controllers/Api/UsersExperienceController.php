@@ -17,12 +17,13 @@ class UsersExperienceController extends Controller
 
     public function store(Request $request){
         $request->validate([
-            'tags' => 'array',
-            'style' => 'string',
-            'categorie' => 'string',
+            'user_id' => 'required|exists:user,id',
+            'title'=> 'required|string',
             'pictures' => 'required',
             'pictures.*' => 'mimes:jpg,jpeg',
-            'user_id' => 'required|exists:user,id',
+            'categories' => 'string',
+            'styles' => 'string',
+            'tags' => 'array',
         ]);
         try {
             $data = $request->input();
@@ -33,6 +34,7 @@ class UsersExperienceController extends Controller
                     $data['pictures'][$key] = $name;
                 }
             }
+            $data['tags'] = 'picture,'.$data['tags'];
             $Post = new UsersExperience($data);
             return response()->json($Post, 200);
         } catch (\Throwable $th) {
@@ -42,12 +44,12 @@ class UsersExperienceController extends Controller
 
     public function update(Request $request, UsersExperience $post){
         $request->validate([
-            'tags' => 'array',
-            'style' => 'string',
-            'categorie' => 'string',
-            'pictures' => 'required',
-            'pictures.*' => 'mimes:jpg,jpeg',
             'user_id' => 'required|exists:user,id',
+            'title'=> 'required|string',
+            'pictures.*' => 'mimes:jpg,jpeg',
+            'categories' => 'string',
+            'styles' => 'string',
+            'tags' => 'array',
         ]);
         try {
             $data = $request->input();
@@ -70,5 +72,26 @@ class UsersExperienceController extends Controller
             return response()->json([],500);
         }
     }
+
+
+    public function search(Request $request){
+        $query = $this->query();
+        if($request->has('title'))
+            $query->where('title', $request->input('title'));
+        if($request->has('types'))
+            foreach ($request->input('types') as $type)
+                $query->orWhere('types', 'LIKE', `,$type`);
+        if($request->has('styles'))
+            foreach ($request->input('styles') as $style)
+                $query->orWhere('styles', 'LIKE', `,$style`);
+        if($request->has('colors'))
+            foreach ($request->input('colors') as $color)
+                $query->orWhere('colors', 'LIKE', `,$color`);
+        if($request->has('tags'))
+            foreach ($request->input('tags') as $tag)
+                $query->orWhere('tags', 'LIKE', `,$tag`);
+        return $query->paginate(20);
+    }
+
 
 }

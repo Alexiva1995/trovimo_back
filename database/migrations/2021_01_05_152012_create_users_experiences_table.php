@@ -17,10 +17,13 @@ class CreateUsersExperiencesTable extends Migration
             $table->id();
             $table->timestamps();
             $table->string('user_id');
-            $table->string('tags')->nullable();
-            $table->string('style')->nullable();
             $table->string('pictures')->nullable();
-            $table->string('categorie')->nullable();
+
+            $table->string('title')->nullable();
+            $table->string('types')->nullable();
+            $table->string('styles')->nullable();
+            $table->string('colors')->nullable();
+            $table->string('tags')->nullable();
         });
     }
 
