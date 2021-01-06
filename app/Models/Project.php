@@ -14,6 +14,30 @@ class Project extends Model
         'name',    'email', 'phone'
     ];
 
+    public function photos(){
+        return $this->hasMany('App\Models\Product_image');
+    }
+
+    public function videos(){
+        return $this->hasMany('App\Models\Product_video');
+    }
+
+    public function details(){
+        return $this->belongsToMany('App\Models\Project_details_name', 'project_details', 'project_id', 'project_details_name_id')->withTimestamps();
+    }
+
+    public function propertys(){
+        return $this->hasMany('App\Models\Property');
+    }
+
+    public function reference_point(){
+        return $this->hasMany('App\Models\Reference_point');
+    }
+    public function professional_groups(){
+        return $this->hasMany('App\Models\Project_professional_group');
+    }
+
+    
     public function scopeAddress($query, $address)
     {
         if ($address != "") {

@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Recommendation;
+use App\Models\favorite;
 use App\Models\Property;
 use App\Models\additional_service;
 use App\Models\Project_professional_group;
@@ -175,5 +175,19 @@ class ProjectController extends Controller
             return response()->json(['message' => 'Error'], 500);
         }
 
+    }
+
+    public function show(Request $request)
+    {
+        $request->validate(['project_id' => 'required']);
+        try {
+            $project = Project::where('id', '=', $request->project_id)->with('photos', 'videos', 'details', 'propertys', 'reference_point', 'professional_groups')->get();
+            $favorite = Favorite::where('project_id', '=', $request->project_id)
+                                ->where('user_id', '=', $request->user()->id)->get();
+            $project->favorite = $favorite;
+            return response()->json(['products' => $project], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Error'], 500);
+        }
     }
 }

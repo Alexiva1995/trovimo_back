@@ -5,33 +5,13 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Favorite;
+use App\Models\Mail;
 use App\Models\Recommendation;
 
 class UserController extends Controller
 {
- /*   {
-        "name":"prueba", 
-        "show_name":1, 
-        "username":"pruebausername", 
-        "email":"fjms93@gmail.com", 
-        "password":"123456789",
-        "role":1, 
-        "phone":{
-                "123456789",
-                "2532602"
-                }, 
-        "country":"venezuela",
-        "city":"juan griego", 
-        "address":{"venezuela/juangriuego",} 
-        "postal_code":"0256", 
-        "linkedin":"linkedin", 
-        "facebook":"facebook", 
-        "youtube":"youtube", 
-        "twitter":"twitter", 
-        "instagram":"instagram", 
-        "id_company":"123456", 
-        }*/
-        
+       
     public function update(Request $request){
         $request->validate([
             'name' => 'required',
@@ -50,7 +30,6 @@ class UserController extends Controller
             return response()->json(['message' => 'error'], 500);
         }
     }
-
     public function update_avatar(Request $request){
         $request->validate([
             'photo'=> 'required',
@@ -83,6 +62,29 @@ class UserController extends Controller
             return response()->json(['message' => 'Error'], 500);
         }
     }
-
-
+    public function favorite(Request $request){
+        try{
+            $favorite = new Favorite($request->all());
+            $favorite->user_id = $request->user()->id;
+            $favorite->save();
+            return response()->json(['message' => 'Success'], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Error'], 500);
+        }
+    }
+    public function contact(Request $request){
+        $request->validate([
+            'name'    => 'required',
+            'email'    => 'required',
+            'message'    => 'required',
+        ]);
+        try{
+            $mail = new Mail($request->all());
+            $mail->user_id = $request->user()->id;
+            $mail->save();
+            return response()->json(['message' => 'Success'], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Error'], 500);
+        }
+    }
 }

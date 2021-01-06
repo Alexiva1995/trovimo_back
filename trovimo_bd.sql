@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-12-2020 a las 17:51:55
+-- Tiempo de generación: 06-01-2021 a las 17:47:48
 -- Versión del servidor: 10.4.11-MariaDB
 -- Versión de PHP: 7.4.4
 
@@ -57,6 +57,14 @@ CREATE TABLE `building_details` (
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Volcado de datos para la tabla `building_details`
+--
+
+INSERT INTO `building_details` (`id`, `name`, `created_at`, `updated_at`) VALUES
+(1, 'prueba1\r\n', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(2, 'prueba2', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+
 -- --------------------------------------------------------
 
 --
@@ -101,6 +109,47 @@ CREATE TABLE `coworking_place_details` (
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Volcado de datos para la tabla `coworking_place_details`
+--
+
+INSERT INTO `coworking_place_details` (`id`, `name`, `created_at`, `updated_at`) VALUES
+(1, 'prueba 1', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(2, 'prueba 2', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `expert_profiles`
+--
+
+CREATE TABLE `expert_profiles` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `company_name` varchar(255) DEFAULT NULL,
+  `company_id` varchar(255) DEFAULT NULL,
+  `areas` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `picture_profile` varchar(255) DEFAULT NULL,
+  `cover_picture` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`cover_picture`)),
+  `about_us` text DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  `emails` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`emails`)),
+  `phones` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`phones`)),
+  `address` text DEFAULT NULL,
+  `networks` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`networks`)),
+  `24/7` tinyint(1) DEFAULT 0,
+  `verified` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `expert_profiles`
+--
+
+INSERT INTO `expert_profiles` (`id`, `user_id`, `company_name`, `company_id`, `areas`, `picture_profile`, `cover_picture`, `about_us`, `url`, `emails`, `phones`, `address`, `networks`, `24/7`, `verified`, `created_at`, `updated_at`) VALUES
+(1, 1, 'prueba', NULL, '{otro}', NULL, NULL, NULL, NULL, NULL, NULL, '{venezuela-juangriego}', NULL, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+
 -- --------------------------------------------------------
 
 --
@@ -111,20 +160,6 @@ CREATE TABLE `expert_services` (
   `id` int(11) NOT NULL,
   `type` varchar(255) NOT NULL,
   `services` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`services`)),
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `expert_services_users`
---
-
-CREATE TABLE `expert_services_users` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `expert_service_id` int(11) NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -148,6 +183,29 @@ CREATE TABLE `failed_jobs` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `favorite`
+--
+
+CREATE TABLE `favorite` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `product_id` int(11) DEFAULT NULL,
+  `shared_space_id` int(11) DEFAULT NULL,
+  `project_id` int(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `favorite`
+--
+
+INSERT INTO `favorite` (`id`, `user_id`, `product_id`, `shared_space_id`, `project_id`, `created_at`, `updated_at`) VALUES
+(2, 1, 1, NULL, NULL, '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `home_details`
 --
 
@@ -157,6 +215,39 @@ CREATE TABLE `home_details` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `home_details`
+--
+
+INSERT INTO `home_details` (`id`, `name`, `created_at`, `updated_at`) VALUES
+(1, 'prueba1', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(2, 'prueba 2', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `mails`
+--
+
+CREATE TABLE `mails` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `product_id` int(11) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `message` text NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `mails`
+--
+
+INSERT INTO `mails` (`id`, `user_id`, `product_id`, `name`, `email`, `phone`, `message`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 'prueba', 'fjms93@gmail.com', '12365895', 'hola mundo', '2021-01-04 14:47:52', '2021-01-04 14:47:52');
 
 -- --------------------------------------------------------
 
@@ -329,19 +420,6 @@ CREATE TABLE `password_resets` (
   `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `place_details`
---
-
-CREATE TABLE `place_details` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -525,10 +603,10 @@ INSERT INTO `projects` (`id`, `user_id`, `category_id`, `price`, `show_price`, `
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `projects_details`
+-- Estructura de tabla para la tabla `project_details`
 --
 
-CREATE TABLE `projects_details` (
+CREATE TABLE `project_details` (
   `id` int(11) NOT NULL,
   `project_id` int(11) NOT NULL,
   `project_details_name_id` int(11) NOT NULL,
@@ -537,16 +615,38 @@ CREATE TABLE `projects_details` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Volcado de datos para la tabla `projects_details`
+-- Volcado de datos para la tabla `project_details`
 --
 
-INSERT INTO `projects_details` (`id`, `project_id`, `project_details_name_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO `project_details` (`id`, `project_id`, `project_details_name_id`, `created_at`, `updated_at`) VALUES
 (1, 3, 1, '2020-12-16 13:59:20', '2020-12-16 13:59:20'),
 (2, 3, 15, '2020-12-16 13:59:20', '2020-12-16 13:59:20'),
 (3, 3, 2, '2020-12-16 13:59:20', '2020-12-16 13:59:20'),
 (4, 3, 1, '2020-12-16 14:00:05', '2020-12-16 14:00:05'),
 (5, 3, 15, '2020-12-16 14:00:05', '2020-12-16 14:00:05'),
 (6, 3, 2, '2020-12-16 14:00:05', '2020-12-16 14:00:05');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `project_details_names`
+--
+
+CREATE TABLE `project_details_names` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `project_details_names`
+--
+
+INSERT INTO `project_details_names` (`id`, `name`, `created_at`, `updated_at`) VALUES
+(1, 'prueba1', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(2, 'prueba2', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(3, 'prueba3', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -641,7 +741,7 @@ CREATE TABLE `reference_points` (
 INSERT INTO `reference_points` (`id`, `product_id`, `project_id`, `point`, `name`, `created_at`, `updated_at`) VALUES
 (1, 1, NULL, 'Villa El Griego', 'Villa El Griego', '2020-11-13 14:06:15', '2020-11-13 14:06:15'),
 (2, 1, NULL, 'point', 'name', '2020-12-16 13:43:51', '2020-12-16 13:43:51'),
-(3, NULL, 3, 'name', 'point', '2020-12-16 14:00:05', '2020-12-16 14:00:05');
+(3, NULL, 2, 'name', 'point', '2020-12-16 14:00:05', '2020-12-16 14:00:05');
 
 -- --------------------------------------------------------
 
@@ -656,6 +756,15 @@ CREATE TABLE `shared_office_place_equipment` (
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Volcado de datos para la tabla `shared_office_place_equipment`
+--
+
+INSERT INTO `shared_office_place_equipment` (`id`, `name`, `created_at`, `updated_at`) VALUES
+(1, 'prueba', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(2, 'prueba 2\r\n', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(3, 'prueba 3', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+
 -- --------------------------------------------------------
 
 --
@@ -668,6 +777,14 @@ CREATE TABLE `shared_office_preferences` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `shared_office_preferences`
+--
+
+INSERT INTO `shared_office_preferences` (`id`, `name`, `created_at`, `updated_at`) VALUES
+(1, 'prueba1', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(2, 'prueba 2', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -683,7 +800,7 @@ CREATE TABLE `shared_spaces` (
   `show_price` tinyint(1) NOT NULL DEFAULT 1,
   `bathroom` int(11) NOT NULL,
   `furnished` int(11) DEFAULT NULL,
-  `pets` int(11) DEFAULT NULL,
+  `pets` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`pets`)),
   `avaliable_date` date DEFAULT NULL,
   `description` text NOT NULL,
   `country` varchar(255) NOT NULL,
@@ -800,7 +917,7 @@ CREATE TABLE `shared_space_plans` (
 --
 
 INSERT INTO `shared_space_plans` (`id`, `shared_space_id`, `name`, `price`, `description`, `created_at`, `updated_at`) VALUES
-(1, 2, 'name', 2000, 'description', '2020-12-16 13:47:39', '2020-12-16 13:47:39'),
+(1, 1, 'name', 2000, 'description', '2020-12-16 13:47:39', '2020-12-16 13:47:39'),
 (2, 2, 'name2', 1000, 'description2', '2020-12-16 13:47:39', '2020-12-16 13:47:39');
 
 -- --------------------------------------------------------
@@ -891,15 +1008,21 @@ ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `expert_services`
+-- Indices de la tabla `coworking_place_details`
 --
-ALTER TABLE `expert_services`
+ALTER TABLE `coworking_place_details`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `expert_services_users`
+-- Indices de la tabla `expert_profiles`
 --
-ALTER TABLE `expert_services_users`
+ALTER TABLE `expert_profiles`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `expert_services`
+--
+ALTER TABLE `expert_services`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -910,9 +1033,21 @@ ALTER TABLE `failed_jobs`
   ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
 
 --
+-- Indices de la tabla `favorite`
+--
+ALTER TABLE `favorite`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `home_details`
 --
 ALTER TABLE `home_details`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `mails`
+--
+ALTER TABLE `mails`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -968,12 +1103,6 @@ ALTER TABLE `password_resets`
   ADD KEY `password_resets_email_index` (`email`);
 
 --
--- Indices de la tabla `place_details`
---
-ALTER TABLE `place_details`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indices de la tabla `products`
 --
 ALTER TABLE `products`
@@ -1010,9 +1139,15 @@ ALTER TABLE `projects`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `projects_details`
+-- Indices de la tabla `project_details`
 --
-ALTER TABLE `projects_details`
+ALTER TABLE `project_details`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `project_details_names`
+--
+ALTER TABLE `project_details_names`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1108,7 +1243,7 @@ ALTER TABLE `additional_services`
 -- AUTO_INCREMENT de la tabla `building_details`
 --
 ALTER TABLE `building_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `categories`
@@ -1117,15 +1252,21 @@ ALTER TABLE `categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
+-- AUTO_INCREMENT de la tabla `coworking_place_details`
+--
+ALTER TABLE `coworking_place_details`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `expert_profiles`
+--
+ALTER TABLE `expert_profiles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT de la tabla `expert_services`
 --
 ALTER TABLE `expert_services`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `expert_services_users`
---
-ALTER TABLE `expert_services_users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -1135,10 +1276,22 @@ ALTER TABLE `failed_jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `favorite`
+--
+ALTER TABLE `favorite`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `home_details`
 --
 ALTER TABLE `home_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `mails`
+--
+ALTER TABLE `mails`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `migrations`
@@ -1201,10 +1354,16 @@ ALTER TABLE `projects`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT de la tabla `projects_details`
+-- AUTO_INCREMENT de la tabla `project_details`
 --
-ALTER TABLE `projects_details`
+ALTER TABLE `project_details`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT de la tabla `project_details_names`
+--
+ALTER TABLE `project_details_names`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `project_professional_group`
@@ -1229,6 +1388,18 @@ ALTER TABLE `recommendations`
 --
 ALTER TABLE `reference_points`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `shared_office_place_equipment`
+--
+ALTER TABLE `shared_office_place_equipment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `shared_office_preferences`
+--
+ALTER TABLE `shared_office_preferences`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `shared_spaces`
