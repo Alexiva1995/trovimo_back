@@ -11,7 +11,8 @@ class Product extends Model
     protected $fillable = [
         'user_id', 'option_id', 'category_id', 'price', 'show_price', 'rooms', 'bath', 'parking_spots',
         'n_pieces', 'area', 'year_built', 'year_remodeled', 'description', 'country', 'city',
-        'postal_code', 'lat', 'lon',    'tour',    'name',    'email', 'phone', 'condition', 'furnished'
+        'postal_code', 'lat', 'lon',    'tour',    'name',    'email', 'phone', 'condition', 'furnished',
+        'photos', 'videos'
     ];
 
     public function scopeAddress($query, $address)
@@ -53,13 +54,6 @@ class Product extends Model
         }
     }
 
-    public function photos(){
-        return $this->hasMany('App\Models\Product_image');
-    }
-
-    public function videos(){
-        return $this->hasMany('App\Models\Product_video');
-    }
 
     public function home_detail(){
         return $this->belongsToMany('App\Models\Home_detail', 'product_home_details', 'product_id', 'home_detail_id')->withTimestamps();
@@ -74,5 +68,19 @@ class Product extends Model
 
     public function reference_point(){
         return $this->hasMany('App\Models\Reference_point');
+    }
+
+    public function user(){
+        return $this->belongsTo('App\Models\User');
+    }
+
+    public function contacted(){
+        return $this->hasMany('App\Models\Mail');
+    }
+    public function favorite(){
+        return $this->hasMany('App\Models\Favorite');
+    }
+    public function viewed(){
+        return $this->hasMany('App\Models\Viewed');
     }
 }

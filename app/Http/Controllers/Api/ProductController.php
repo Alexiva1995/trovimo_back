@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\favorite;
+use App\Models\Favorite;
 use App\Models\Product;
-use App\Models\additional_service;
-use App\Models\building_detail;
-use App\Models\Category;
+use App\Models\Additional_service;
+use App\Models\Building_detail;
+use App\Models\Viewed;
 use App\Models\Home_detail;
 use App\Models\Option;
 use App\Models\Product_image;
@@ -61,10 +61,11 @@ class ProductController extends Controller
                 $name = 'image_' . $request->product_id . time() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path() . '/uploads/products/images/', $name);
 
-                $photo = new Product_image();
-                $photo->url = $name;
-                $photo->product_id = $request->product_id;
-                $photo->save();
+                $product = Product::find($request->product_id);
+                $photos = json_decode($product->photos);
+                array_push($photos, $name);
+                $product->photos = json_encode($photos);
+                $product->save();
             }
             return response()->json(['message' => 'success'], 200);
         } catch (Exception $e) {
@@ -77,24 +78,24 @@ class ProductController extends Controller
         try {
             $request->validate([
                 'product_id' => 'required',
-                'type' => 'required',
+                'video' => 'required',
             ]);
             if ($request->hasFile('video')) {
                 $file = $request->file('video');
                 $name = 'video_' . $request->product_id . time() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path() . '/uploads/products/videos/', $name);
-
-                $video = new Product_video();
-                $video->url = $name;
-                $video->product_id = $request->product_id;
-                $video->type = $request->type;
-                $video->save();
+                $url = "https://trovimo.com/";
+                $product = Product::find($request->product_id);
+                $videos = json_decode($product->videos);
+                array_push($videos, $url . $name);
+                $product->videos = json_encode($videos);
+                $product->save();
             } else {
-                $video = new Product_video();
-                $video->url = $request->url;
-                $video->product_id = $request->product_id;
-                $video->type = $request->type;
-                $video->save();
+                $product = Product::find($request->product_id);
+                $videos = json_decode($product->videos);
+                array_push($videos, $request->video);
+                $product->videos = json_encode($videos);
+                $product->save();
             }
             return response()->json(['message' => 'Success'], 200);
         } catch (Exception $e) {
@@ -196,13 +197,88 @@ class ProductController extends Controller
     {
         $request->validate(['product_id' => 'required']);
         try {
-            $product = Product::where('id', '=', $request->product_id)->with('photos', 'videos', 'home_detail', 'building_detail', 'Additional_service', 'reference_point')->get();
+            $product = Product::where('id', '=', $request->product_id)->with('home_detail', 'building_detail', 'Additional_service', 'reference_point')->get();
             $favorite = Favorite::where('product_id', '=', $request->product_id)
                 ->where('user_id', '=', $request->user()->id)->get();
             $product->favorite = $favorite;
+            //guardando como visto
+            $viewed = Viewed::where('user_id', '=', $request->user()->id)
+                ->where('product_id', '=', $request->product_id)->count();
+            if ($viewed < 1) {
+                $view =  new Viewed();
+                $view->user_id = $request->user()->id;
+                $view->product_id = $request->product_id;
+                $view->save();
+            }
+
             return response()->json(['products' => $product], 200);
         } catch (Exception $e) {
             return response()->json(['message' => 'Error'], 500);
+        }
+    }
+
+    public function update_product(Request $request)
+    {
+        $request->validate([
+            'price' => 'required', 'show_price' => 'required', 'rooms' => 'required', 'bath' => 'required',
+            'parking_spots' => 'required', 'n_pieces' => 'required', 'area' => 'required', 'year_built' => 'required',
+            'year_remodeled' => 'required', 'description' => 'required', 'country' => 'required', 'city' => 'required',
+            'postal_code' => 'required', 'lat' => 'required', 'lon' => 'required', 'tour' => 'required', 'name' => 'required',
+            'email' => 'required', 'phone' => 'required', 'option_id' => 'required', 'category_id' => 'required', 'product_id' => 'required',
+        ]);
+        try {
+            $product = Product::find($request->product_id);
+            $product->fill($request->all());
+            $product->save();
+            return response()->json(['message' => $product], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Error'], 500);
+        }
+    }
+
+    public function updated_photo_product(Request $request)
+    {
+        $request->validate(['photo_name' => 'required', 'photo' => 'required']);
+        try {
+            if ($request->hasFile('photo')) {
+                $file = $request->file('photo');
+                $file->move(public_path() . '/uploads/products/images/', $request->name);
+            }
+            return response()->json(['message' => 'success'], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'error'], 500);
+        }
+    }
+
+    public function update_video_product(Request $request)
+    {
+        try {
+            $request->validate([
+                'product_id' => 'required',
+                'video_id' => 'required',
+                'video' => 'required',
+            ]);
+            if ($request->hasFile('video')) {
+                $file = $request->file('video');
+                $name = 'video_' . $request->product_id . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path() . '/uploads/products/videos/', $name);
+
+                $url = "https://trovimo.com/";
+                $product = Product::find($request->product_id);
+                $videos = json_decode($product->videos);
+                $video[$request->video_id] = $url.$name;
+                $product->videos = json_encode($videos);
+                $product->save();
+             } else {
+                $product = Product::find($request->product_id);
+                $videos = json_decode($product->videos);
+                $videos[$request->video_id] = $request->video;
+                $product->videos = json_encode($videos);
+                $product->save();
+             }
+            return response()->json(['message' => 'Success'], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'error'], 500);
         }
     }
 }

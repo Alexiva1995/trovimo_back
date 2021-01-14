@@ -9,12 +9,27 @@ class Expert_profile extends Model
     public $table = "expert_profiles";
 
     protected $fillable = [
-        'user_id','company_id', 'company_name', 'areas', 'picture_profile', 'cover_picture', 'about_us', 'url', 'emails',
-        'phones', 'address', 'networks', '24/7', 'verified'
+        'user_id', 'company_id', 'company_name', 'areas', 'picture_profile', 'cover_picture', 'about_us', 'url', 'emails',
+        'phones', 'address', 'linkedin', 'facebook', 'youtube', 'twitter', 'instagram', '24/7', 'verified'
     ];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo('App\Models\User');
+    }
+
+    public function contacted()
+    {
+        return $this->hasMany('App\Models\Mail');
+    }
+
+    public function favorite()
+    {
+        return $this->hasMany('App\Models\favorite');
+    }
+    public function viewed()
+    {
+        return $this->hasMany('App\Models\Viewed');
     }
 
     public function scopeAreas($query, $areas)
@@ -41,10 +56,10 @@ class Expert_profile extends Model
     public function scopeType_Expert($query, $type)
     {
         if ($type != "") {
-            if ($type == 1) {//experto
-            $query->where('company_name', '==', NULL);
-            }elseif($type != 2) {//compañia
-            $query->where('company_name', '<>', NULL);
+            if ($type == 1) { //experto
+                $query->where('company_name', '==', NULL);
+            } elseif ($type != 2) { //compañia
+                $query->where('company_name', '<>', NULL);
             }
         }
     }
