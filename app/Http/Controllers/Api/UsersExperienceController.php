@@ -74,8 +74,8 @@ class UsersExperienceController extends Controller
     }
 
 
-    public function search(Request $request){
-        $query = $this->query();
+    public function search(Request $request, UsersExperience $post){
+        $query = $post->query();
         if($request->has('title'))
             $query->where('title', $request->input('title'));
         if($request->has('types'))
