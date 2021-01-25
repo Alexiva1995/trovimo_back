@@ -9,12 +9,10 @@ class UsersExperience extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'tags',
-        'style',
-        'categorie',
-        'pictures',
         'user_id',
+        'title',
+        'pictures',
+        'categorie',
+        'style',
     ];
-
-
 }

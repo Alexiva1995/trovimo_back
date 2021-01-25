@@ -6,9 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\UsersExperience;
 use App\Http\Controllers\Controller;
 
-class UsersExperienceController extends Controller
-{
-
+class UsersExperienceController extends Controller {
     function __construct(){ }
 
 
@@ -25,18 +23,14 @@ class UsersExperienceController extends Controller
         catch (\Throwable $th) { return response()->json([ 'message'=>$th, ]); }
     }
 
-
-
-
-
     public function store(Request $request){
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'title'=> 'required|string',
             'pictures' => 'required',
             'pictures.*' => 'mimes:jpg,jpeg',
-            'categories' => 'string',
-            'styles' => 'string',
+            'categorie' => 'string',
+            'style' => 'string',
         ]);
         try {
             $data = $request->input();
@@ -59,8 +53,8 @@ class UsersExperienceController extends Controller
             'user_id' => 'required|exists:user,id',
             'title'=> 'required|string',
             'pictures.*' => 'mimes:jpg,jpeg',
-            'categories' => 'string',
-            'styles' => 'string',
+            'categorie' => 'string',
+            'style' => 'string',
         ]);
         try {
             $data = $request->input();
