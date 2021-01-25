@@ -34,5 +34,45 @@ class ExpertController extends Controller
         }
 
     }
+    public function create_expert_profile(Request $request){
+        $request->validate(['user_id' => 'required','areas' => 'required', 'about_us' => 'required',
+        'phones' => 'required','address' => 'required',
+        '24/7' => 'required',]);
+      try {
+            $expert = new Expert_profile($request->all());
+            $expert->user_id= $request->user()->id;
+            $expert->save();
+            //cargamos la imagen
+            if ($request->hasFile('photo')) {
+                $file = $request->file('photo');
+                $name = 'image_' . $request->expert_id . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path() . '/uploads/experts_profile/images/', $name);
+                $expert->picture_profile = $name;
+                $expert->save();
+            }
+            return response()->json(['message' => 'Success'], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Error'], 500);
+        }
+    }
+    public function add_photo_expert_profile(Request $request)
+    {
+        $request->validate(['expert_id' => 'required', 'photo' => 'required']);
+        try {
+            if ($request->hasFile('photo')) {
+                $file = $request->file('photo');
+                $name = 'image_' . $request->expert_id . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path() . '/uploads/experts_profile/cover_pictures/', $name);
 
+                $expert = Expert_profile::find($request->expert_id);
+                $photos = json_decode($expert->cover_picture);
+                array_push($photos,$name);
+                $expert->cover_picture = json_encode($photos);
+                $expert->save();
+            }
+            return response()->json(['message' => 'Success'], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'error'], 500);
+        }
+    }
 }

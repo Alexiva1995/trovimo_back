@@ -22,7 +22,7 @@ class User extends Authenticatable
         'password', 'role', 'phone', 'country',
         'city', 'address', 'postal_code', 'linkedin', 
         'facebook', 'youtube', 'twitter', 'instagram', 
-        'id_company', 'register_type',
+        'notifications', 'register_type',
     ];
 
     /**
@@ -46,5 +46,27 @@ class User extends Authenticatable
 
     public function expert_profile(){
         return $this->hasOne('App\Models\Expert_profile');
+    }
+
+    public function products(){
+        return $this->hasMany('App\Models\Product');
+    }
+    public function projects(){
+        return $this->hasMany('App\Models\Project');
+    }
+    public function shared_spaces(){
+        return $this->hasMany('App\Models\shared_space');
+    }
+
+    public function contacted_products(){
+        return $this->hasMany('App\Models\Mail');
+    }
+
+    public function favorite_products(){
+        return $this->hasMany('App\Models\Favorite');
+    }
+
+    public function viewed_products(){
+        return $this->hasMany('App\Models\Viewed');
     }
 }

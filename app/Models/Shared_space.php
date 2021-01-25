@@ -10,34 +10,49 @@ class Shared_space extends Model
 
     protected $fillable = [
         'user_id', 'category_id', 'price', 'show_price', 'bathroom', 'furnished', 'pets', 'avaliable_date',
-        'description', 'country', 'city', 'postal_code', 'lat', 'lon', 'tour', 'name', 'email', 'phone'
+        'description', 'country', 'city', 'postal_code', 'lat', 'lon', 'tour', 'name', 'email', 'phone', 'photos',
+        'videos'
     ];
 
-    public function photos(){
-        return $this->hasMany('App\Models\Product_image');
-    }
-
-    public function videos(){
-        return $this->hasMany('App\Models\Product_video');
-    }
-
-    public function equiments(){
+    public function equiments()
+    {
         return $this->belongsToMany('App\Models\shared_office_place_equipment', 'shared_spaces_place_equipment', 'shared_space_id', 'shared_office_place_equipment_id')->withTimestamps();
     }
 
-    public function preferences(){
+    public function preferences()
+    {
         return $this->belongsToMany('App\Models\shared_office_preference', 'shared_spaces_preferences', 'shared_space_id', 'shared_office_preference_id')->withTimestamps();
     }
 
-    public function amenities(){
+    public function amenities()
+    {
         return $this->belongsToMany('App\Models\Coworking_place_detail', 'shared_spaces_place_details', 'shared_space_id', 'coworking_place_details_id')->withTimestamps();
     }
 
-    public function plans(){
+    public function plans()
+    {
         return $this->hasMany('App\Models\Shared_space_plan');
     }
-    
 
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User');
+    }
+
+    public function contacted()
+    {
+        return $this->hasMany('App\Models\Mail');
+    }
+
+    public function favorite()
+    {
+        return $this->hasMany('App\Models\favorite');
+    }
+
+    public function viewed()
+    {
+        return $this->hasMany('App\Models\Viewed');
+    }
     public function scopeAddress($query, $address)
     {
         if ($address != "") {
@@ -77,7 +92,8 @@ class Shared_space extends Model
         }
     }
 
-    public function scopeAmenities($query, $amenities){
+    public function scopeAmenities($query, $amenities)
+    {
         if ($amenities != "") {
             $query->where('bathroom', '=', $amenities);
         }

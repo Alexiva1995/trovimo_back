@@ -30,6 +30,8 @@ Route::group(['prefix' => 'auth'], function () {
 
         Route::group(['prefix' => 'user'], function () {
             Route::post('update', 'Api\UserController@update');
+            Route::post('show-user-listings', 'Api\UserController@show_user_listings');
+            Route::post('show-user-activity', 'Api\UserController@show_user_activity');
         });
 
         Route::group(['prefix' => 'services'], function () {
@@ -41,6 +43,7 @@ Route::group(['prefix' => 'auth'], function () {
             Route::post('new-product', 'Api\ProductController@create_product');
             Route::post('add-photo-product', 'Api\ProductController@add_photo_product');
             Route::post('add-video-product', 'Api\ProductController@add_video_product');
+            Route::post('update-video-product', 'Api\ProductController@update_video_product');
             Route::post('optional-product', 'Api\ProductController@create_optional');
             Route::post('search-product', 'Api\ProductController@search');
             Route::post('show-product', 'Api\ProductController@show');
@@ -63,6 +66,8 @@ Route::group(['prefix' => 'auth'], function () {
             Route::post('show-project', 'Api\ProjectController@show');
 
             Route::post('search-expert', 'Api\ExpertController@search');
+            Route::post('create-expert-profile', 'Api\ExpertController@create_expert_profile');
+            Route::post('add-photo-expert-profile', 'Api\ExpertController@add_photo_expert_profile');
 
         });
     });
