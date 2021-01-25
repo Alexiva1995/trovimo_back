@@ -9,21 +9,34 @@ use App\Http\Controllers\Controller;
 class UsersExperienceController extends Controller
 {
 
-    function __construct(){
+    function __construct(){ }
 
+
+    public function index(Request $request) {
+        $query = UsersExperience::where('id','>','0');
+        foreach ( $request->except('perPage') as $key => $value )
+            $query = $query->where($key, 'LIKE', "%$value%");
+        return $query
+        ->paginate($request->input('perPage') || 20)
+            ->withQueryString();
+    }
+    public function show(UsersExperience $UserExperience){
+        try { return response()->json([ 'data'=>$UserExperience, ]); }
+        catch (\Throwable $th) { return response()->json([ 'message'=>$th, ]); }
     }
 
-    public function show(UsersExperience $post){ return response()->json($post, 200); }
+
+
+
 
     public function store(Request $request){
         $request->validate([
-            'user_id' => 'required|exists:user,id',
+            'user_id' => 'required|exists:users,id',
             'title'=> 'required|string',
             'pictures' => 'required',
             'pictures.*' => 'mimes:jpg,jpeg',
             'categories' => 'string',
             'styles' => 'string',
-            'tags' => 'array',
         ]);
         try {
             $data = $request->input();
@@ -34,7 +47,6 @@ class UsersExperienceController extends Controller
                     $data['pictures'][$key] = $name;
                 }
             }
-            $data['tags'] = 'picture,'.$data['tags'];
             $Post = new UsersExperience($data);
             return response()->json($Post, 200);
         } catch (\Throwable $th) {
@@ -49,7 +61,6 @@ class UsersExperienceController extends Controller
             'pictures.*' => 'mimes:jpg,jpeg',
             'categories' => 'string',
             'styles' => 'string',
-            'tags' => 'array',
         ]);
         try {
             $data = $request->input();
@@ -72,26 +83,4 @@ class UsersExperienceController extends Controller
             return response()->json([],500);
         }
     }
-
-
-    public function search(Request $request){
-        $query = $this->query();
-        if($request->has('title'))
-            $query->where('title', $request->input('title'));
-        if($request->has('types'))
-            foreach ($request->input('types') as $type)
-                $query->orWhere('types', 'LIKE', `,$type`);
-        if($request->has('styles'))
-            foreach ($request->input('styles') as $style)
-                $query->orWhere('styles', 'LIKE', `,$style`);
-        if($request->has('colors'))
-            foreach ($request->input('colors') as $color)
-                $query->orWhere('colors', 'LIKE', `,$color`);
-        if($request->has('tags'))
-            foreach ($request->input('tags') as $tag)
-                $query->orWhere('tags', 'LIKE', `,$tag`);
-        return $query->paginate(20);
-    }
-
-
 }
