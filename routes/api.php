@@ -80,16 +80,14 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 });
 
-Route::resource('blog', 'Admin\BlogController');
 
-
-Route::resource('reels', 'Api\UsersExperienceController');
 /*
-    Para las busquedas no se usaran URL amigables
-    · Titulo ?title=Modern+Artic
-    · Tipos ?types=kitchen,living
-    · Estilos ?styles=modern,rustic
-    · Colores ?colors=red,blue,green
-    · Etiquetas ?tags=room,bathroom
+Para las busquedas no se usaran URL amigables
+· Titulo ?title=Modern+Artic
+· Tipos ?types=kitchen,living
+· Estilos ?styles=modern,rustic
+· Colores ?colors=red,blue,green
+· Etiquetas ?tags=room,bathroom
 */
-Route::get('reels/search', 'Api\UsersExperienceController@search');
+Route::resource('blogs', 'Admin\BlogController');
+Route::resource('users_experiences', 'Api\UsersExperienceController');

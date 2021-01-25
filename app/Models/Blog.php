@@ -2,22 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Blog extends Model
-{
+class Blog extends Model {
     use HasFactory;
-
-    protected $appends = ['autor'];
-    protected $hiddens = ['user_id'];
+    protected $appends = ['autor', 'categorie',];
+    protected $hidden = ['category_id', 'user_id'];
     protected $fillable = [
         'title',
         'picture',
         'content',
         'user_id',
+        'created_at',
+        'updated_at',
     ];
-
     public function getAutorAttribute(){
         return User::find($this->user_id);
     }
@@ -28,5 +28,7 @@ class Blog extends Model
         ]);
         return $user;
     }
-
+    public function getCategorieAttribute(){
+        return DB::table('blogs_categories')->find($this->category_id)->title;
+    }
 }

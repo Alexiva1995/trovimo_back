@@ -5,14 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UsersExperience extends Model
+class MyProject extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'user_id',
         'title',
+        'description',
+        'country',
+        'city',
         'pictures',
-        'categorie',
-        'style',
+        'is_experience',
     ];
+
+
+
 }
