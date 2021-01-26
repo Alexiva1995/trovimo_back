@@ -11,13 +11,17 @@ class UsersExperienceController extends Controller {
 
 
     public function index(Request $request) {
-        $query = UsersExperience::where('id','>','0');
+        $data = collect([
+            'filter'=>DB::table('users_experiences_categories')->get(),
+        ]);
+        $query = Blog::where('id','>','0');
         foreach ( $request->except('perPage') as $key => $value )
             $query = $query->where($key, 'LIKE', "%$value%");
-        return $query
-        ->paginate($request->input('perPage') || 20)
-            ->withQueryString();
+        return $data->merge(
+            $query->paginate()->withQueryString()
+        );
     }
+
     public function show(UsersExperience $UserExperience){
         try { return response()->json([ 'data'=>$UserExperience, ]); }
         catch (\Throwable $th) { return response()->json([ 'message'=>$th, ]); }
