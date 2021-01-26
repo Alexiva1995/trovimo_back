@@ -73,10 +73,7 @@ Route::group(['prefix' => 'auth'], function () {
             Route::post('search-expert', 'Api\ExpertController@search');
             Route::post('create-expert-profile', 'Api\ExpertController@create_expert_profile');
             Route::post('add-photo-expert-profile', 'Api\ExpertController@add_photo_expert_profile');
-<<<<<<< HEAD
-=======
 
->>>>>>> 9308623691df445e6095c57527120ae85f5b290f
         });
     });
     /*

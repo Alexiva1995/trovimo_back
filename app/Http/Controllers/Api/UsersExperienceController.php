@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Models\UsersExperience;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class UsersExperienceController extends Controller {
@@ -14,7 +15,7 @@ class UsersExperienceController extends Controller {
         $data = collect([
             'filter'=>DB::table('users_experiences_categories')->get(),
         ]);
-        $query = Blog::where('id','>','0');
+        $query = UsersExperience::where('id','>','0');
         foreach ( $request->except('perPage') as $key => $value )
             $query = $query->where($key, 'LIKE', "%$value%");
         return $data->merge(
